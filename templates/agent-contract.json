@@ -1,0 +1,26 @@
+{
+  "app": "maintenance-tracker",
+  "contractVersion": 1,
+  "doors": ["appfunctions"],
+  "defaultEnabled": false,
+  "functions": [
+    {
+      "name": "getNextDue",
+      "description": "Returns the next maintenance items due for a vehicle, soonest first, with the mileage or date each is due.",
+      "inputs": { "vehicleId": "string?" },
+      "outputs": { "items": [{ "item": "string", "dueAtMiles": "int?", "dueOn": "date?" }] },
+      "effect": "READ",
+      "sensitivity": "LOW",
+      "confirmation": "NONE"
+    },
+    {
+      "name": "logService",
+      "description": "Records a completed service (for example an oil change) at a given mileage, after the user confirms it in the app.",
+      "inputs": { "vehicleId": "string", "item": "string", "miles": "int" },
+      "outputs": { "saved": "boolean" },
+      "effect": "WRITE_LOCAL",
+      "sensitivity": "PERSONAL",
+      "confirmation": "IN_APP"
+    }
+  ]
+}

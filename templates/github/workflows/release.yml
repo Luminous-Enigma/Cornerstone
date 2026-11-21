@@ -1,0 +1,47 @@
+# TEMPLATE: copy to <app repo>/.github/workflows/release.yml
+# (It does not run from this folder; GitHub only runs .github/workflows/.)
+#
+# Going Public item 5: release signing runs ONLY when the owner triggers it
+# by hand, ONLY from main. Secrets live in the "release" environment, which
+# should require the owner's approval (Settings -> Environments -> release ->
+# Required reviewers, and Deployment branches = main only).
+name: release
+
+on:
+  workflow_dispatch:     # manual trigger only, no push/PR/tag triggers
+
+permissions:
+  contents: read
+
+jobs:
+  signed-release:
+    if: github.ref == 'refs/heads/main' && github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    environment: release
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Decode keystore (from secret, into the runner's temp dir only)
+        env:
+          KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+        run: echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+      - name: Build signed bundle
+        env:
+          RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease
+      - name: Remove keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: app/build/outputs/bundle/release/*.aab
