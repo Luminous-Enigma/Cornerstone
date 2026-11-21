@@ -20,8 +20,8 @@ the owner. **Only the owner makes a repo public.**
    - *Checked by:* Manual, owner.
    - *In Cornerstone:* [`templates/github/dependabot.yml`](../templates/github/dependabot.yml)
 
-5. **Workflows** use `pull_request`, never `pull_request_target`. Forked pull requests never get secrets. Release signing runs only on the owner's manual trigger, from `main`.
-   - *Checked by:* Gate GP4.
+5. **Workflows** use `pull_request`, never `pull_request_target`. Forked pull requests never get secrets. Release signing runs only on the owner's manual trigger, from `main`. Every third-party action is **pinned to an exact commit** (`uses: actions/checkout@<40-character commit> # v7.0.1`), so a hijacked release tag can't slip new code into the build; Dependabot keeps the pins up to date.
+   - *Checked by:* Gate GP4 (no `pull_request_target`) and gate GP7 (every `uses:` is pinned to a full commit).
    - *In Cornerstone:* [`templates/github/workflows/`](../templates/github/workflows/)
 
 6. **Shared code** from private repos is copied into `/shared` and listed in `SHARED_SOURCES.md` with source and date. Switch to depending on it if it goes public.
@@ -32,8 +32,8 @@ the owner. **Only the owner makes a repo public.**
    - *Checked by:* Review, plus gates GP2 and GP3.
    - *In Cornerstone:* [`templates/SECURITY.md`](../templates/SECURITY.md), [`templates/github/ISSUE_TEMPLATE/`](../templates/github/ISSUE_TEMPLATE/)
 
-8. **License.** Stop and ask the owner before adding a LICENSE file. Check dependencies for copyleft (for example GPL-3.0 code generally means the app is GPL-3.0 too).
-   - *Checked by:* Gate GP6 fails if a LICENSE appears without a `.license-approved` file.
+8. **License.** Stop and ask the owner before adding a LICENSE file. Check every dependency's license automatically, not by hand: copyleft licenses (GPL, AGPL, LGPL) can decide the project's own license (GPL-3.0 code generally means the app is GPL-3.0 too), and some licenses aren't free to use at all.
+   - *Checked by:* Gate GP6 (no LICENSE without a `.license-approved` file), plus a dependency license report in CI for the repo's ecosystem: `npx license-checker-rseidelsohn --summary` (npm), `pip-licenses` (Python), the `licensee` Gradle plugin (Android), failing on any license not on the repo's allowed list.
    - *In Cornerstone:* —
 
 9. **README:** what it does, any disclaimer that applies ("not legal advice", "not an emergency service"), how to build it, the copyright line.

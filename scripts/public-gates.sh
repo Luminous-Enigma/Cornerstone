@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Going Public gates. Run locally or in CI:  bash scripts/public-gates.sh
+# Going Public gates GP1-GP7. Run locally or in CI:  bash scripts/public-gates.sh
+# scripts/test-gates.sh proves each gate catches a planted failure.
 # Fails (exit 1) if any check fails. Requires: git, gitleaks (v8+), python3.
 set -uo pipefail
 
@@ -26,10 +27,14 @@ if command -v gitleaks >/dev/null 2>&1; then
   else bad "GP3 gitleaks found possible secrets (see above)"; fi
 else bad "GP3 gitleaks not installed"; fi
 
+# Folders that hold workflows; only the ones that exist are searched. (grep exits with an error
+# when a listed folder is missing, even after finding matches, so never judge by its exit code.)
+wf_dirs=(); for d in .github/workflows templates; do [ -d "$d" ] && wf_dirs+=("$d"); done
+
 # GP4: workflows never use pull_request_target.
-if grep -rInE '^[^#]*pull_request_target' .github/workflows templates 2>/dev/null; then
-  bad "GP4 pull_request_target found in a workflow (listed above)"
-else pass "GP4 no pull_request_target"; fi
+prt=""; [ ${#wf_dirs[@]} -gt 0 ] && prt=$(grep -rInE '^[^#]*pull_request_target' "${wf_dirs[@]}" 2>/dev/null || true)
+if [ -z "$prt" ]; then pass "GP4 no pull_request_target"
+else bad "GP4 pull_request_target found in a workflow:"; printf '      %s\n' "$prt"; fi
 
 # GP5: every JSON file parses.
 jbad=0
@@ -43,5 +48,11 @@ if git ls-files | grep -Eiq '^(LICENSE|COPYING)(\.|$)'; then
   if [ -f .license-approved ]; then pass "GP6 LICENSE present and approved"
   else bad "GP6 LICENSE file present without owner approval (.license-approved missing)"; fi
 else pass "GP6 no LICENSE added without owner decision"; fi
+
+# GP7: every third-party action is pinned to a full 40-character commit, not a movable tag.
+unpinned=""; [ ${#wf_dirs[@]} -gt 0 ] && unpinned=$(grep -rhoE '^[[:space:]-]*uses:[[:space:]]*[^[:space:]#]+' "${wf_dirs[@]}" 2>/dev/null \
+  | sed -E 's/^[[:space:]-]*uses:[[:space:]]*//' | grep -v '^\./' | grep -vE '@[0-9a-f]{40}$' || true)
+if [ -z "$unpinned" ]; then pass "GP7 every action pinned to a full commit"
+else bad "GP7 actions not pinned to a full commit:"; printf '      %s\n' $unpinned; fi
 
 exit $fail

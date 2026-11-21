@@ -1,0 +1,17 @@
+{
+  "name": "agent-ready-starter",
+  "version": "0.1.0",
+  "description": "A small, complete example of an agent-ready tool: checks whether two colors give readable text.",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "contrast": "src/cli.js" },
+  "scripts": {
+    "test": "node --test",
+    "mcp": "node src/mcp.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
+  }
+}
