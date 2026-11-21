@@ -98,6 +98,11 @@ lesson below comes from a check that once missed what it was built to catch, or 
    broken copy that it must reject. CI runs the check against the planted failure too, and fails
    if the check lets it through. *(A gate meant to block `pull_request_target` once missed it
    when written on one line; a planted example would have caught that the day it was written.)*
+   Plant every one of the **15 kinds** (plain, written differently, somewhere else, hidden in
+   history, sneaky edge, renamed, encoding tricks, side door, many at once, blind environment,
+   disguised, look-alike source, drift, silenced by settings, tampering), plus **look-alikes**
+   that must pass. A check with an exact answer catches 100%; a case no check can decide is a
+   written limit naming what covers it instead. The gates do this in full: [GATES.md](GATES.md).
 2. **Check the input is real before judging it.** Before comparing or grading, confirm the thing
    exists and isn't empty: the page rendered, the file has content, the tool was really called.
    *(A screenshot comparison once reported "0 pixels changed" because every signed-in page was
