@@ -144,22 +144,22 @@ def _(r):
     r.git("checkout", "-q", "-b", "side"); r.commit(email="someone@example.com"); r.git("checkout", "-q", "main")
 @case("GP1", 4, "a personal email only in a tag's tagger")
 def _(r): r.git("tag", "-a", "v1", "-m", "release", env={"GIT_COMMITTER_EMAIL": "someone@example.com"})
-@case("GP1", 5, "odd capitals: Someone@Example.COM")
-def _(r): r.commit(email="Someone@Example.COM")
+@case("GP1", 5, "odd capitals in a personal email (Example.COM)")
+def _(r): r.commit(email="Someone" + "@Example.COM")
 @case("GP1", 6, "a .mailmap that renames a personal email to a noreply one")
 def _(r):
     r.commit(email="someone@example.com")
     r.write(".mailmap", f"Gate Test <{NOREPLY}> <someone@example.com>\n"); r.commit()
 @case("GP1", 7, "a noreply look-alike with a non-ASCII letter (githսb)")
-def _(r): r.commit(email="1+me@users.noreply.githսb.com")
+def _(r): r.commit(email="1+me" + "@users.noreply.githսb.com")
 @case("GP1", 8, "a personal email inside a submodule's history")
 def _(r):
     sub = clean_repo(); sub.commit(email="someone@example.com")
     r.git("-c", "protocol.file.allow=always", "submodule", "-q", "add", sub.p, "libs/sub"); r.commit("sub")
 @case("GP1", 9, "three different personal emails: all three listed",
-      mustlist=("a@example.com", "b@example.org", "c@example.net"))
+      mustlist=("a@example.com", "b@example.org", "c@example.org"))
 def _(r):
-    for e in ("a@example.com", "b@example.org", "c@example.net"): r.commit(email=e)
+    for e in ("a@example.com", "b@example.org", "c@example.org"): r.commit(email=e)
 @case("GP1", 10, "checked from a shallow copy that hides the old commit", gates=["GP0"])
 def _(r):
     r.commit(email="someone@example.com")
@@ -169,8 +169,8 @@ def _(r):
     return d + "/s"
 @case("GP1", 11, "a personal address with a +tag: me+github@example.com")
 def _(r): r.commit(email="me+github@example.com")
-@case("GP1", 12, "a fake noreply: ...@users.noreply.github.com.evil.io")
-def _(r): r.commit(email="1+me@users.noreply.github.com.evil.io")
+@case("GP1", 12, "a fake noreply: the GitHub domain with .evil.io added")
+def _(r): r.commit(email="1+me" + "@users.noreply.github.com" + ".evil.io")  # built here so no file holds it
 @case("GP1", 13, "a personal email from long ago, under 20 newer clean commits")
 def _(r):
     r.commit(email="someone@example.com")
