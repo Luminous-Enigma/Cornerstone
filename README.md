@@ -39,6 +39,5 @@ emergency service.
 
 ## License
 
-Pending the owner's decision. Until a license is added, the default applies: all rights reserved.
-
-Copyright © 2026 Luminous Enigma.
+[MIT](LICENSE): use it, change it, share it, for free. Keep the copyright line, so the credit
+travels with it.
