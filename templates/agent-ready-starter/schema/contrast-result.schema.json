@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Luminous-Enigma/Cornerstone/templates/agent-ready-starter/schema/contrast-result.schema.json",
+  "title": "Contrast check result",
+  "type": "object",
+  "required": ["foreground", "background", "ratio", "needed", "passes"],
+  "additionalProperties": false,
+  "properties": {
+    "foreground": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+    "background": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+    "ratio": { "type": "number", "minimum": 1, "maximum": 21 },
+    "needed": { "enum": [3, 4.5] },
+    "passes": { "type": "boolean" }
+  }
+}

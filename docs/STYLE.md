@@ -13,6 +13,21 @@ AI agents alike.
 - **Markdown tables are space-padded** so columns line up when read as plain text in a terminal,
   a diff or an editor.
 
+## Accessibility
+
+Everything people use must be usable by everyone, the same promise the themes keep.
+
+- **Text contrast** meets WCAG AA: at least 4.5:1 for normal text and 3:1 for large text, in
+  every theme the app offers. Measured, not eyeballed.
+- **Controls you tap** are at least 44 by 44 points (48 by 48 dp on Android), with space between
+  them.
+- **Screen readers:** every button, icon and image has a label that says what it does or shows;
+  decorative images are marked as decorative.
+- **Never color alone:** state and errors are also shown with words or icons.
+- **Motion:** respect the system's "reduce motion" setting; nothing flashes more than three
+  times a second.
+- **Text size:** layouts still work at 200% text size.
+
 ## Honesty
 
 - **Report what actually happened.** If a test fails, say so with the output. If a step was
