@@ -24,7 +24,12 @@ the repo needs. Step by step: [`docs/USING_CORNERSTONE.md`](docs/USING_CORNERSTO
 
 ## Checks
 
-The Going Public gates run on every pull request here, and any repo can run them:
+The Going Public gates run on every pull request here, and any repo can run them. A self-test
+first proves each gate catches a planted failure, so a gate can't quietly stop working:
+
+```bash
+bash scripts/test-gates.sh
+```
 
 ```bash
 bash scripts/public-gates.sh

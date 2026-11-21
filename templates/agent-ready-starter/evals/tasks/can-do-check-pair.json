@@ -1,0 +1,16 @@
+{
+  "id": "can-do-check-pair",
+  "kind": "can-do",
+  "tier": "quick",
+  "prompt": "Is white text readable on the background #101B44? Answer yes or no and give the ratio.",
+  "grade": {
+    "mustCall": [{ "tool": "check_contrast", "arguments": { "foreground": "#FFFFFF", "background": "#101B44" } }],
+    "answerMustMatch": "\\byes\\b",
+    "answerMustMention": ["16."]
+  },
+  "brokenVariant": {
+    "how": "The tool returns passes: false for every pair.",
+    "expect": "fail"
+  },
+  "passRate": { "quick": "3 of 3", "full": "9 of 10" }
+}
