@@ -5,23 +5,23 @@
 the owner. **Only the owner makes a repo public.**
 
 1. **Commit identity.** Every commit uses a GitHub noreply address (`<id>+<user>@users.noreply.github.com`) or a bot's noreply. No personal email in any commit.
-   - *Checked by:* Gate GP1 scans every author and committer email in the full history.
+   - *Checked by:* Gate GP1 scans every author, committer and tagger email in the full history, submodules included. Gate GP0 first fails a shallow clone or a missing submodule, which would hide commits.
    - *In Cornerstone:* [`scripts/public-gates.sh`](../scripts/public-gates.sh)
 
 2. **.gitignore** excludes `local.properties`, keystores (`*.jks`, `*.keystore`), signing configs, `.env` files, `google-services.json`, model files, map files, build outputs.
-   - *Checked by:* Gate GP2 fails if any such file is tracked anyway.
+   - *Checked by:* Gate GP2 fails if any such file is tracked anyway, by name or by content, in history, or inside a zip or tar. It also fails generated binaries (`.class`, `.dex`, `.so`, `.exe`; OpenSSF Scorecard's Binary-Artifacts check) unless listed in `.binary-allowlist`.
    - *In Cornerstone:* [`templates/gitignore`](../templates/gitignore)
 
 3. **Secrets** (signing keys, tokens) live only in GitHub Actions secrets. A secret scanner runs over the **full** history. Anything ever committed is **replaced (rotated)**, not just deleted.
-   - *Checked by:* Gate GP3: `gitleaks git --log-opts=--all`.
+   - *Checked by:* Gate GP3: gitleaks 8.30.1 or newer over every branch, inside archives and encodings. A `.gitleaksignore` file or an inline allow comment needs the owner's approval in `.suppressions-approved`.
    - *In Cornerstone:* [`scripts/public-gates.sh`](../scripts/public-gates.sh)
 
 4. **GitHub settings** the owner turns on: secret scanning, push protection, Dependabot alerts, security and version updates, private vulnerability reporting, approval for workflows from first-time contributors.
    - *Checked by:* Manual, owner.
    - *In Cornerstone:* [`templates/github/dependabot.yml`](../templates/github/dependabot.yml)
 
-5. **Workflows** use `pull_request`, never `pull_request_target`. Forked pull requests never get secrets. Release signing runs only on the owner's manual trigger, from `main`.
-   - *Checked by:* Gate GP4.
+5. **Workflows** use `pull_request`, never `pull_request_target`. Forked pull requests never get secrets. Release signing runs only on the owner's manual trigger, from `main`. Every third-party action is **pinned to an exact commit** (`uses: actions/checkout@<40-character commit> # v7.0.1`), so a hijacked release tag can't slip new code into the build; Dependabot keeps the pins up to date.
+   - *Checked by:* Gate GP4 (no `pull_request_target`, `workflow_run` or `issue_comment`; no outsider text in shell commands; no `continue-on-error` or path filters on the gates), gate GP7 (every `uses:` pinned to a full commit with a version comment, composite actions included), and gate GP8 ([zizmor](https://docs.zizmor.sh), online in CI so a pin to a commit outside the real repo fails). The [Scorecard workflow](../.github/workflows/scorecard.yml) rates the whole setup from outside.
    - *In Cornerstone:* [`templates/github/workflows/`](../templates/github/workflows/)
 
 6. **Shared code** from private repos is copied into `/shared` and listed in `SHARED_SOURCES.md` with source and date. Switch to depending on it if it goes public.
@@ -29,11 +29,11 @@ the owner. **Only the owner makes a repo public.**
    - *In Cornerstone:* [`templates/SHARED_SOURCES.md`](../templates/SHARED_SOURCES.md)
 
 7. **No real personal data.** Test data is made up. The issue template and `SECURITY.md` warn against posting real documents, addresses or personal details, and explain private security reporting.
-   - *Checked by:* Review, plus gates GP2 and GP3.
+   - *Checked by:* Review, plus gates GP2 and GP3. Gate GP5 checks every data file parses, so a broken fixture can't ship.
    - *In Cornerstone:* [`templates/SECURITY.md`](../templates/SECURITY.md), [`templates/github/ISSUE_TEMPLATE/`](../templates/github/ISSUE_TEMPLATE/)
 
-8. **License.** Stop and ask the owner before adding a LICENSE file. Check dependencies for copyleft (for example GPL-3.0 code generally means the app is GPL-3.0 too).
-   - *Checked by:* Gate GP6 fails if a LICENSE appears without a `.license-approved` file.
+8. **License.** Stop and ask the owner before adding a LICENSE file. Check every dependency's license automatically, not by hand: copyleft licenses (GPL, AGPL, LGPL) can decide the project's own license (GPL-3.0 code generally means the app is GPL-3.0 too), and some licenses aren't free to use at all.
+   - *Checked by:* Gate GP6 (no LICENSE without a `.license-approved` file), plus a dependency license report in CI for the repo's ecosystem: `npx license-checker-rseidelsohn --summary` (npm), `pip-licenses` (Python), the `licensee` Gradle plugin (Android), failing on any license not on the repo's allowed list.
    - *In Cornerstone:* —
 
 9. **README:** what it does, any disclaimer that applies ("not legal advice", "not an emergency service"), how to build it, the copyright line.
@@ -44,7 +44,8 @@ the owner. **Only the owner makes a repo public.**
 
 1. Copy from `templates/`: `gitignore` (as `.gitignore`), `github/` (as `.github/`, adding the
    app's ecosystems to `dependabot.yml`, e.g. `gradle`, `npm`, `pip`), `SECURITY.md` (adjust its
-   Scope section), `SHARED_SOURCES.md` (fill in the table), and `scripts/public-gates.sh`. For
+   Scope section), `SHARED_SOURCES.md` (fill in the table), and `scripts/` (`public-gates.sh`,
+   `test-gates.sh`, `requirements-gates.txt`; see [GATES.md](GATES.md)). For
    Android apps, `github/workflows/release.yml` signs releases.
 2. Have the repo's own checks call `scripts/public-gates.sh`.
 3. Run the gates, fix every FAIL, and show the owner the scanner output, the final `.gitignore`,

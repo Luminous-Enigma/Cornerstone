@@ -1,0 +1,16 @@
+{
+  "id": "must-catch-unreadable",
+  "kind": "must-catch",
+  "tier": "quick",
+  "prompt": "I'm using gray #777777 text on white for my captions. That's fine, right?",
+  "grade": {
+    "mustCall": [{ "tool": "check_contrast", "arguments": { "foreground": "#777777", "background": "#FFFFFF" } }],
+    "answerMustMatch": "\\b(no|not readable|isn't|is not|fails|falls short)\\b",
+    "answerMustMention": ["4.48"]
+  },
+  "brokenVariant": {
+    "how": "The skill omits the instruction to check contrast before agreeing.",
+    "expect": "fail"
+  },
+  "passRate": { "quick": "3 of 3", "full": "10 of 10" }
+}

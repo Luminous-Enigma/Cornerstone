@@ -12,7 +12,7 @@ Any repo can follow it, public or private, by pointing to it.
 |-----------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | [Baseline Rule](docs/BASELINE_RULE.md)                          | Everything ships agent-ready: data files with a schema, a CLI, CI checks, MCP, a skill and docs |
 | [Safety rule](docs/AGENT_READY.md#the-rule-that-protects-users) | An agent can read and draft; a person approves anything that changes, spends, sends or deletes  |
-| [Agent-ready apps](docs/AGENT_READY.md)                         | What apps add on top: the Agent Contract, the doors, the effects, and gates AG1 to AG7          |
+| [Agent-ready apps](docs/AGENT_READY.md)                         | What apps add on top: the Agent Contract, the doors, the effects, and gates AG1 to AG9          |
 | [Going Public](docs/GOING_PUBLIC.md)                            | The checklist and gates every repo passes before it is made public                              |
 | [Style and working rules](docs/STYLE.md)                        | American English, plain words, honest reporting, prove claims, never weaken a test              |
 
@@ -24,13 +24,21 @@ the repo needs. Step by step: [`docs/USING_CORNERSTONE.md`](docs/USING_CORNERSTO
 
 ## Checks
 
-The Going Public gates run on every pull request here, and any repo can run them:
+The Going Public gates run on every pull request here, and any repo can run them. A self-test
+first proves each gate catches a planted failure, so a gate can't quietly stop working:
+
+```bash
+bash scripts/test-gates.sh
+```
 
 ```bash
 bash scripts/public-gates.sh
 ```
 
-They need `git`, `python3` and [gitleaks](https://github.com/gitleaks/gitleaks) v8 or newer.
+They need `git`, `python3`, [gitleaks](https://github.com/gitleaks/gitleaks) 8.30.1 or newer and
+[zizmor](https://docs.zizmor.sh) 1.32.0 or newer. Each gate is tested against 15 kinds of planted
+failure plus look-alikes: [docs/GATES.md](docs/GATES.md). Where each rule comes from:
+[docs/STANDARDS.md](docs/STANDARDS.md).
 
 ## What it is not
 
