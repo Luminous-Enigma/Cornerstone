@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0            # full history for the secret scan and identity check
           persist-credentials: false
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: '1.22'
           cache: false
