@@ -28,17 +28,17 @@ The same text is in [`templates/CLAUDE-snippet.md`](../templates/CLAUDE-snippet.
 
 ## 3. Copy the pieces the repo needs
 
-| Need                       | Copy from Cornerstone                                                                      |
-|----------------------------|--------------------------------------------------------------------------------------------|
-| Going-public checks        | `scripts/public-gates.sh`, `scripts/test-gates.sh`, `templates/github/workflows/gates.yml` |
-| Safe `.gitignore`          | `templates/gitignore`                                                                      |
-| Security policy and issues | `templates/SECURITY.md`, `templates/github/ISSUE_TEMPLATE/`                                |
-| Dependency updates         | `templates/github/dependabot.yml`                                                          |
-| Signed Android releases    | `templates/github/workflows/release.yml`                                                   |
-| An app's agent surface     | `templates/agent-contract.json`                                                            |
-| Copies of private code     | `templates/SHARED_SOURCES.md`                                                              |
-| A skill for AI agents      | `templates/SKILL.md`                                                                       |
-| A new agent-ready project  | `templates/agent-ready-starter/` (copy the whole folder)                                   |
+| Need                       | Copy from Cornerstone                                                                                                        |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| Going-public checks        | `scripts/public-gates.sh`, `scripts/test-gates.sh`, `scripts/requirements-gates.txt`, `templates/github/workflows/gates.yml` |
+| Safe `.gitignore`          | `templates/gitignore`                                                                                                        |
+| Security policy and issues | `templates/SECURITY.md`, `templates/github/ISSUE_TEMPLATE/`                                                                  |
+| Dependency updates         | `templates/github/dependabot.yml`                                                                                            |
+| Signed Android releases    | `templates/github/workflows/release.yml`                                                                                     |
+| An app's agent surface     | `templates/agent-contract.json`                                                                                              |
+| Copies of private code     | `templates/SHARED_SOURCES.md`                                                                                                |
+| A skill for AI agents      | `templates/SKILL.md`                                                                                                         |
+| A new agent-ready project  | `templates/agent-ready-starter/` (copy the whole folder)                                                                     |
 
 ## Private notes stay private
 
